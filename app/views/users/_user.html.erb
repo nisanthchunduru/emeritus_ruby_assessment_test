@@ -21,7 +21,7 @@
 
   <p id='classmates'>
     <strong>Class Mates:</strong>
-    <%= User.classmates(user).map(&:name).join(', ') %>
+    <%= user.classmates.map(&:name).join(', ') %>
   </p>
 
 </div>
