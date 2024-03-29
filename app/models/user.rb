@@ -19,23 +19,39 @@ class User < ApplicationRecord
 
   validate :validate_kind_on_update, on: :update
 
-  def validate_kind_on_update
-    if changed_to_student? && was_teacher? && teaches_programs_currently?
-      errors.add(:kind, "Kind can not be student because is teaching in at least one program")
-    end
+  def studies_programs?
+    programs.exists?
   end
 
-  def teaches_programs_currently?
+  def teaches_programs?
     taught_programs.exists?
   end
 
   private
 
-  def was_teacher?
-    kind_was == "teacher"
+  def validate_kind_on_update
+    if changed_to_student? && was_teacher? && teaches_programs?
+      errors.add(:kind, "Kind can not be student because is teaching in at least one program")
+    end
+
+    if changed_to_teacher? && was_student? && studies_programs?
+      errors.add(:kind, "Kind can not be teacher because is studying in at least one program")
+    end
   end
 
   def changed_to_student?
     kind == "student"
+  end
+
+  def changed_to_teacher?
+    kind == "teacher"
+  end
+
+  def was_teacher?
+    kind_was == "teacher"
+  end
+
+  def was_student?
+    kind_was == "student"
   end
 end
