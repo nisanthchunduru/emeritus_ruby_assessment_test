@@ -4,10 +4,6 @@ class User < ApplicationRecord
   has_many :teachers, through: :enrollments
   has_many :favorite_teachers, -> { where(enrollments: { favorite: true }) }, through: :enrollments, source: :teacher
 
-  def taught_programs
-    Enrollment.where(teacher: self)
-  end
-
   def classmates
     User
       .joins(:programs)
@@ -24,7 +20,7 @@ class User < ApplicationRecord
   end
 
   def teaches_programs?
-    taught_programs.exists?
+    Enrollment.where(teacher: self).exists?
   end
 
   private
